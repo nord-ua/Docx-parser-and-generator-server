@@ -1,0 +1,21 @@
+<html>
+<body>
+<form action="/build" method="post" enctype="multipart/form-data">
+    <div>
+        Document: <input type="file" name="file" />
+    </div>
+    <div>
+        Image: <input type="file" name="image-1" />
+    </div>
+
+    <div>
+        <textarea name="data" cols="50" rows="10">{"data":{"11:1": {"content":"ASDASDASD","type":"edit"}, "3:5": {"type": "date", "content": "11.11.1111"}, "27:2": {"type": "image", "content": "image-1", "w": 178, "h": 85}}}</textarea>
+    </div>
+
+    <p>
+        <input type="submit" value="Submit" />
+    </p>
+
+</form>
+</body>
+</html>
