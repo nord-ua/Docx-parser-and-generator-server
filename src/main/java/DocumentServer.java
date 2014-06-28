@@ -24,7 +24,7 @@ import java.util.Map;
 
 import static spark.Spark.*;
 
-public class HelloWorld {
+public class DocumentServer {
 
     private static final int DEFAULT_BUFFER_SIZE = 10240; // 10KB.
 
