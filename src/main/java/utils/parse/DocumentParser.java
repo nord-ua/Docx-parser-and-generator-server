@@ -28,13 +28,13 @@ public class DocumentParser {
         List<MyParagraph> parHolder = new Vector<MyParagraph>();
         List<Object> ignored = new Vector<Object>();
         Map<Object, ParagraphRangeUpdater> updaters = new HashMap<Object, ParagraphRangeUpdater>();
-        Map<String, ParsedPart> parsedParts = new HashMap<String, ParsedPart>();
+        List<ParsedPart> parsedParts = new Vector<ParsedPart>();
 
         parHolder.clear();
         updaters.clear();
         ignored.clear();
 
-        MyParagraph myParagraph;
+        XWPFParagraph prevParagraph;
         for (int paragraphNumber = 0; paragraphNumber < paragraphs.size(); paragraphNumber++) {
             XWPFParagraph pr = paragraphs.get(paragraphNumber);
 
@@ -50,14 +50,17 @@ public class DocumentParser {
 
             String prevKey = null;
             List<XWPFRun> runs = pr.getRuns();
+            XWPFRun prevSegment;
             for (int characterRunNumber = 0; characterRunNumber<runs.size(); characterRunNumber++) {
                 XWPFRun segment = runs.get(characterRunNumber);
 
                 String runKey = paragraphNumber + ":" + characterRunNumber;
 
-                String text = segment.getText(segment.getTextPosition());
+                String text = segment.toString();
                 String highlight = "" + segment.getCTR().getRPr();
-                System.out.println("Text: " + text); // segment.getCTR().getRPr()
+                System.out.println("Text: " + text);
+                prevSegment = segment;
+
                 int color = 0;
                 if (highlight.contains("w:fill=\"FF0000")) {
                     color = 6;
@@ -78,20 +81,25 @@ public class DocumentParser {
                         break;
                     default:
                         current = Types.TEXT;
-                        if (text != null)
-                            sbText.append(text);
+                        if (text == null)
+                            text = "";
+
+                        sbText.append(text);
                         break;
                 }
+
+                if (prev == Types.NONE)
+                    prev = current;
 
                 // An interesting part
                 // One GREEN/RED block can be splitted by POI to several segments
                 // So to collect parts correctly I use something like FSM
-                if ((prev != Types.NONE && current != prev) || characterRunNumber == runs.size() - 1) {
+                if (current != prev || characterRunNumber == runs.size() - 1) {
                     // For every kind of segment we add corresponding widget to
                     // layout
 
                     if (prev == Types.TEXT && 0 != sbText.length()) {
-                        parsedParts.put(prevKey, new TextPart(prevKey, sbText.toString()));
+                        parsedParts.add(new TextPart(prevKey, sbText.toString()));
                         sbText = new StringBuilder();
                     }
 
@@ -103,9 +111,9 @@ public class DocumentParser {
                         if ("LOAD DATA".equals(buttonsText)) {
                             // TODO: add datepicker
 //                            myParagraph.addTextSource(prevKey, new ButtonRangeUpdater("DATE"));
-                            parsedParts.put(prevKey, new DatePickerPart(prevKey));
+                            parsedParts.add(new DatePickerPart(prevKey));
                         } else if ("BROWSE".equals(buttonsText.substring(0, 6))) {
-                            parsedParts.put(prevKey, new ImagePart(prevKey));
+                            parsedParts.add(new ImagePart(prevKey));
 //                            myParagraph.addTextSource(prevKey, new ImageRangeUpdater("image.png"));
                         }
                         sbButton = new StringBuilder();
@@ -113,7 +121,7 @@ public class DocumentParser {
 
                     // Edit texts for GREEN blocks
                     if (prev == Types.EDIT && 0 != sbEditText.length()) {
-                        parsedParts.put(prevKey, new EditPart(prevKey, sbEditText.toString()));
+                        parsedParts.add(new EditPart(prevKey, sbEditText.toString()));
 //                        myParagraph.addTextSource(prevKey, new EditRangeUpdater("EDIT"));
                         sbEditText = new StringBuilder();
                     }
@@ -122,6 +130,8 @@ public class DocumentParser {
                 prev = current;
                 prevKey = runKey;
             }
+
+            prevParagraph = pr;
         }
 
         return new ParsedData(parHolder, ignored, updaters, parsedParts);

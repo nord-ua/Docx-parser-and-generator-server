@@ -51,7 +51,7 @@ public class DocumentServer {
                 JSONObject result = new JSONObject();
                 JSONArray data = new JSONArray();
 
-                for (ParsedPart pp : parsedData.parsedParts.values()) {
+                for (ParsedPart pp : parsedData.parsedParts) {
                     data.put(pp.getJson());
                 }
                 result.put("data", data);

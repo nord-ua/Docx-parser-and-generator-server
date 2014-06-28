@@ -10,9 +10,9 @@ public class ParsedData {
     final public List<MyParagraph> parHolder;
     final public List<Object> ignored;
     final public Map<Object, ParagraphRangeUpdater> updaters;
-    final public Map<String, ParsedPart> parsedParts;
+    final public List<ParsedPart> parsedParts;
 
-    public ParsedData(List<MyParagraph> parHolder, List<Object> ignored, Map<Object, ParagraphRangeUpdater> updaters, Map<String, ParsedPart> parsedParts) {
+    public ParsedData(List<MyParagraph> parHolder, List<Object> ignored, Map<Object, ParagraphRangeUpdater> updaters, List<ParsedPart> parsedParts) {
         this.parHolder = parHolder;
         this.ignored = ignored;
         this.updaters = updaters;
