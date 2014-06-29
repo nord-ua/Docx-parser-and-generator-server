@@ -16,6 +16,17 @@ public class ClientData {
         public Type type;
         public String content;
         public int w, h;
+
+        @Override
+        public String toString() {
+            return "Item{" +
+                    "key='" + key + '\'' +
+                    ", type=" + type +
+                    ", content='" + content + '\'' +
+                    ", w=" + w +
+                    ", h=" + h +
+                    '}';
+        }
     }
 
     public Map<String, Item> data;
@@ -23,4 +34,10 @@ public class ClientData {
         return data.get(key);
     }
 
+    @Override
+    public String toString() {
+        return "ClientData{" +
+                "data=" + data +
+                '}';
+    }
 }

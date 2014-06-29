@@ -133,7 +133,8 @@ public class DocumentServer {
 
     private static ClientData getClientData(MultipartRequest req) {
         Gson gson = new Gson();
-        JsonElement element = new JsonParser().parse(req.getParameter("data"));
+        String stringData = req.getParameter("data");
+        JsonElement element = new JsonParser().parse(stringData);
         JsonObject object = element.getAsJsonObject();
 
         ClientData clientData = gson.fromJson(object, ClientData.class);

@@ -39,7 +39,7 @@ public class DocumentBuilder {
 
                 if (data.data.containsKey(runKey)) {
                     ClientData.Item item = data.item(runKey);
-                    switch (item.type) {
+                    switch (item.type) {//TODO: merge
                         case EDIT:
                             new EditRangeUpdater(item.content).updateRange(segment);
                             break;
